@@ -10,13 +10,16 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-  useCreateIndex: true,
-    useFindAndModify: false
+  // useCreateIndex: true,
+  // useFindAndModify: false
+}, () => {
+  console.log('conected to MongoDB!');
+  app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
+  });
 });
 
 app.use(bodyParser.json());
-app.use('/users', router);
+app.use('/', router);
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`)
-});
+
