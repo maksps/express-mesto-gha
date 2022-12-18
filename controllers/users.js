@@ -1,4 +1,3 @@
-const Card = require("../models/card");
 const User = require("../models/user");
 
 const getUsers = async (req, res) => {
@@ -14,14 +13,14 @@ const getUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const  {userId}   = req.params;
+    const user = await User.findById(userId);
     if (user === null) {
       return res.status(404).json({ message: "пользователь не найден" })
     }
     return res.status(200).json(user)
 
-  } catch {
+  } catch(e) {
     console.error(e);
     return res.status(500).json({ message: "произошла ошибка!" })
   }
