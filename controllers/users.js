@@ -16,7 +16,7 @@ const getUser = async (req, res) => {
     const  {userId}   = req.params;
     const user = await User.findById(userId);
     if (user === null) {
-      return res.status(404).json({ message: "пользователь не найден" })
+      return res.status(404).json({ message: "Пользователь не найден" })
     }
     return res.status(200).json(user)
 
@@ -35,14 +35,20 @@ const createUser = async (req, res) => {
   }
   catch (e) {
     console.error(e);
-    return res.status(500).json({ message: "произошла ошибка!" })
+    if (e.name === "ValidationError") {
+      return res.status(400).json({ message: "переданы некорректные данные в методы создания пользователя", error: e. message })
+    }
+    return res.status(500).json ({message: "произошла ошибка!", error: e. message})
   }
 };
 
 const updateUser = async (req, res) => {
   try {
     const body = req.body;
-    await User.findByIdAndUpdate(req.user._id , body);
+   const user =  await User.findByIdAndUpdate(req.user._id , body);
+   if (user === null) {
+    return res.status(404).json({ message: "Пользователь не найден" })
+  }
     const updatedUser = await User.findById(req.user._id);
     return res.status(201).json({updatedUser})
 
@@ -56,7 +62,10 @@ const updateUser = async (req, res) => {
 const updateUserAvatar = async (req, res) => {
   try {
     const {avatar} = req.body;
-    await User.findByIdAndUpdate(req.user._id , {avatar});
+    const user = await User.findByIdAndUpdate(req.user._id , {avatar});
+    if (user === null) {
+      return res.status(404).json({ message: "Пользователь не найден" })
+    }
     const updatedUser = await User.findById(req.user._id);
     return res.status(201).json({updatedUser})
 
