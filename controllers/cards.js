@@ -47,15 +47,21 @@ const addLike = async (req, res) => {
   try {
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
-      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { $addToSet: { likes: req.user._id } },
       { new: true },
     );
+    if (card === null) {
+      return res.status(404).json({ message: "такой карточки не существует" })
+    }
     return res.status(201).json({ card });
 
   }
   catch (e) {
     console.error(e);
-    return res.status(500).json({ message: "произошла ошибка!" })
+    if (e.name === "CastError") {
+      return res.status(400).json({ message: "переданы некорректный запрос", error: e.message })
+    }
+    return res.status(500).json({ message: "произошла ошибка!", e })
   }
 };
 
@@ -65,11 +71,17 @@ const deleteLike = async (req, res) => {
       req.params.cardId,
       { $pull: { likes: req.user._id } }, // убрать _id из массива
       { new: true },);
-    return res.status(201).json({ card });
+      if (card === null) {
+        return res.status(404).json({ message: "такой карточки не существует" })
+      }
+    return res.status(200).json({ card });
 
   }
   catch (e) {
     console.error(e);
+    if (e.name === "CastError") {
+      return res.status(400).json({ message: "переданы некорректный запрос", error: e.message })
+    }
     return res.status(500).json({ message: "произошла ошибка!" })
   }
 };

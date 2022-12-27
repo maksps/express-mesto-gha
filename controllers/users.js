@@ -13,14 +13,14 @@ const getUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const  {userId}   = req.params;
+    const { userId } = req.params;
     const user = await User.findById(userId);
     if (user === null) {
-      return res.status(404).json({ message: "Пользователь не найден" })
+      return res.status(400).json({ message: "Пользователь не найден" })
     }
     return res.status(200).json(user)
 
-  } catch(e) {
+  } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "произошла ошибка!" })
   }
@@ -30,44 +30,46 @@ const createUser = async (req, res) => {
   try {
     const body = req.body;
     const user = await User.create(body);
-    return res.status(201).json({ message: "пользователь создан" })
+    return res.status(201).json({ user })
 
   }
   catch (e) {
     console.error(e);
     if (e.name === "ValidationError") {
-      return res.status(400).json({ message: "переданы некорректные данные в методы создания пользователя", error: e. message })
+      return res.status(400).json({ message: "переданы некорректные данные в методы создания пользователя", error: e.message })
     }
-    return res.status(500).json ({message: "произошла ошибка!", error: e. message})
+    return res.status(500).json({ message: "произошла ошибка!", error: e.message })
   }
 };
 
 const updateUser = async (req, res) => {
   try {
     const body = req.body;
-   const user =  await User.findByIdAndUpdate(req.user._id , body);
-   if (user === null) {
-    return res.status(404).json({ message: "Пользователь не найден" })
-  }
-    const updatedUser = await User.findById(req.user._id);
-    return res.status(201).json({updatedUser})
+    const user = await User.findByIdAndUpdate(req.user._id, body, { new: true, runValidators: true });
+    if (user === null) {
+      return res.status(404).json({ message: "Пользователь не найден" })
+    }
+
+    return res.status(200).json({ user })
 
   }
   catch (e) {
     console.error(e);
+    if (e.name === "ValidationError") {
+      return res.status(400).json({ message: "переданы некорректные данные в методы создания пользователя", error: e.message })
+    }
     return res.status(500).json({ message: "произошла ошибка!" })
   }
 };
 
 const updateUserAvatar = async (req, res) => {
   try {
-    const {avatar} = req.body;
-    const user = await User.findByIdAndUpdate(req.user._id , {avatar});
+    const { avatar } = req.body;
+    const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true });
     if (user === null) {
       return res.status(404).json({ message: "Пользователь не найден" })
     }
-    const updatedUser = await User.findById(req.user._id);
-    return res.status(201).json({updatedUser})
+    return res.status(201).json({ user })
 
   }
   catch (e) {
