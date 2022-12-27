@@ -16,12 +16,15 @@ const getUser = async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (user === null) {
-      return res.status(400).json({ message: "Пользователь не найден" })
+      return res.status(404).json({ message: "Пользователь не найден" })
     }
     return res.status(200).json(user)
 
   } catch (e) {
     console.error(e);
+    if (e.name === "CastError") {
+      return res.status(400).json({ message: "переданы некорректный запрос", error: e.message })
+    }
     return res.status(500).json({ message: "произошла ошибка!" })
   }
 };
@@ -69,7 +72,7 @@ const updateUserAvatar = async (req, res) => {
     if (user === null) {
       return res.status(404).json({ message: "Пользователь не найден" })
     }
-    return res.status(201).json({ user })
+    return res.status(200).json({ user })
 
   }
   catch (e) {

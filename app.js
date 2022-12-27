@@ -11,8 +11,7 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-  // useCreateIndex: true,
-  // useFindAndModify: false
+
 }, () => {
   console.log('conected to MongoDB!');
   app.listen(PORT, () => {
@@ -24,14 +23,15 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   req.user = {
     _id: '639e11177c7c8b54f426dcf6'
-    // _id: '639e11177c7c8b54f426dcf1'
-
   };
 
   next();
 });
 app.use('/', cards);
 app.use('/', users);
+app.use('*', (req, res, next) => {
+  return res.status(404).json({ message: "Неверный URL" })
+});
 
 
 
