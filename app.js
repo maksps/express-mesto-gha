@@ -10,7 +10,6 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-
 }, () => {
   console.log('conected to MongoDB!');
   app.listen(PORT, () => {

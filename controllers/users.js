@@ -6,7 +6,7 @@ const getUsers = async (req, res) => {
     return res.status(200).json(users);
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -23,7 +23,7 @@ const getUser = async (req, res) => {
     if (e.name === 'CastError') {
       return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -37,7 +37,7 @@ const createUser = async (req, res) => {
     if (e.name === 'ValidationError') {
       return res.status(400).json({ message: 'переданы некорректные данные в методы создания пользователя', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!', error: e.message });
+    return res.status(500).json({ message: 'На сервере произошла ошибка', error: e.message });
   }
 };
 
@@ -59,7 +59,7 @@ const updateUser = async (req, res) => {
     if (e.name === 'ValidationError') {
       return res.status(400).json({ message: 'переданы некорректные данные в методы создания пользователя', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -77,7 +77,7 @@ const updateUserAvatar = async (req, res) => {
     return res.status(200).json({ user });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ message: e });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 

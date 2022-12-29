@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/maksps/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Maksimov Pavel",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/maksps/express-mesto-gha/issues"

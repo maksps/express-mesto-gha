@@ -6,14 +6,13 @@ const getCards = async (req, res) => {
     return res.status(200).json(cards);
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
 const deleteCard = async (req, res) => {
   try {
     const { cardId } = req.params;
-    console.log(cardId);
     const card = await Card.findByIdAndDelete(cardId);
     if (card === null) {
       return res.status(404).json({ message: 'Карточка не найдена' });
@@ -24,7 +23,7 @@ const deleteCard = async (req, res) => {
     if (e.name === 'CastError') {
       return res.status(400).json({ message: 'передан некорректный запрос', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -38,7 +37,7 @@ const createCard = async (req, res) => {
     if (e.name === 'ValidationError') {
       return res.status(400).json({ message: 'переданы некорректные данные в методы создания карточки', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!', error: e.message });
+    return res.status(500).json({ message: 'На сервере произошла ошибка', error: e.message });
   }
 };
 
@@ -58,7 +57,7 @@ const addLike = async (req, res) => {
     if (e.name === 'CastError') {
       return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!', e });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -78,7 +77,7 @@ const deleteLike = async (req, res) => {
     if (e.name === 'CastError') {
       return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
     }
-    return res.status(500).json({ message: 'произошла ошибка!' });
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
   }
 };
 
