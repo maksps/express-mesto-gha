@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const auth = require('./middlewares/auth');
+
+const {
+  createUser, login,
+} = require('./controllers/users');
 
 const PORT = 3000;
 
@@ -25,6 +30,10 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use(auth);
 app.use('/', cards);
 app.use('/', users);
 app.use('*', (req, res) => res.status(404).json({ message: 'Неверный URL' }));
