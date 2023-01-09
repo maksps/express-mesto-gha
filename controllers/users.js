@@ -1,67 +1,70 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const BadRequest = require('../errors/BadRequest');
+const NotFoundError = require('../errors/NotFoundError');
+const Unauthorized = require('../errors/Unauthorized');
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select('+password');
     if (user === null) {
-      return res.status(401).json({ message: 'Неправильный пароль или логин' });
+      throw new Unauthorized('Неправильный пароль или логин');
     }
     const result = await bcrypt.compare(password, user.password);
     if (!result) {
-      return res.status(401).json({ message: 'Неправильный пароль или логин' });
+      throw new Unauthorized('Неправильный пароль или логин');
     }
     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-    return res.status(200).json({ token: token });
+    return res.status(200).json({ token });
   } catch (e) {
-    return res.status(500).json({ message: 'На сервере произошла ошибка', error: e.message });
+    return next(e);
   }
 };
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     return res.status(200).json(users);
   } catch (e) {
-    return res.status(500).json({ message: 'На сервере произошла ошибка', error: e.message });
+    return next(e);
   }
 };
 
-const getUser = async (req, res) => {
+const getUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (user === null) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
     return res.status(200).json(user);
   } catch (e) {
     if (e.name === 'CastError') {
-      return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
+      throw new BadRequest('передан некорректный запрос');
     }
-    return res.status(500).json({ message: 'На сервере произошла ошибка' });
+    return next(e);
   }
 };
 
-const getUserMe = async (req, res) => {
+const getUserMe = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const user = await User.findById(userId);
     if (user === null) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
     return res.status(200).json(user);
   } catch (e) {
     if (e.name === 'CastError') {
-      return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
+      throw new BadRequest('переданы некорректный запрос');
     }
-    return res.status(500).json({ message: 'На сервере произошла ошибка' });
+    return next(e);
   }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
     const {
       name, about, avatar, email, password,
@@ -80,13 +83,13 @@ const createUser = async (req, res) => {
       return res.status(409).json({ message: 'Пользоватиель с таким email уже существует' });
     }
     if (e.name === 'ValidationError') {
-      return res.status(400).json({ message: 'переданы некорректные данные в методы создания пользователя', error: e.message });
+      throw new BadRequest('переданы некорректные данные в методы создания пользователя');
     }
-    return res.status(500).json({ message: 'На сервере произошла ошибка', error: e });
+    return next(e);
   }
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     const { body } = req;
     const user = await User.findByIdAndUpdate(
@@ -95,19 +98,19 @@ const updateUser = async (req, res) => {
       { new: true, runValidators: true },
     );
     if (user === null) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
 
     return res.status(200).json({ user });
   } catch (e) {
     if (e.name === 'ValidationError') {
-      return res.status(400).json({ message: 'переданы некорректные данные в методы создания пользователя', error: e.message });
+      throw new BadRequest('переданы некорректные данные в методы создания пользователя');
     }
-    return res.status(500).json({ message: 'На сервере произошла ошибка' });
+    return next(e);
   }
 };
 
-const updateUserAvatar = async (req, res) => {
+const updateUserAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -116,11 +119,11 @@ const updateUserAvatar = async (req, res) => {
       { new: true, runValidators: true },
     );
     if (user === null) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
     return res.status(200).json({ user });
   } catch (e) {
-    return res.status(500).json({ message: 'На сервере произошла ошибка' });
+    return next(e);
   }
 };
 

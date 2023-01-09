@@ -23,18 +23,27 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(bodyParser.json());
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '639e11177c7c8b54f426dcf6',
-//   };
-
-//   next();
-// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
 app.use('/', cards);
 app.use('/', users);
+
 app.use('*', (req, res) => res.status(404).json({ message: 'Неверный URL' }));
 
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+    return next(err);
+  }
+
+  const { statusCode = 500, message } = err;
+  return res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+});
