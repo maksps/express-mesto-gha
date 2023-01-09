@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minLength: 8,
+    select: false,
   },
 });
 const userModel = mongoose.model('user', userSchema);

@@ -5,7 +5,7 @@ const User = require('../models/user');
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
     if (user === null) {
       return res.status(401).json({ message: 'Неправильный пароль или логин' });
     }
@@ -14,7 +14,7 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Неправильный пароль или логин' });
     }
     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-    return res.status(200).json({ jwt: token });
+    return res.status(200).json({ token: token });
   } catch (e) {
     return res.status(500).json({ message: 'На сервере произошла ошибка', error: e.message });
   }
@@ -45,6 +45,22 @@ const getUser = async (req, res) => {
   }
 };
 
+const getUserMe = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (user === null) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+    return res.status(200).json(user);
+  } catch (e) {
+    if (e.name === 'CastError') {
+      return res.status(400).json({ message: 'переданы некорректный запрос', error: e.message });
+    }
+    return res.status(500).json({ message: 'На сервере произошла ошибка' });
+  }
+};
+
 const createUser = async (req, res) => {
   try {
     const {
@@ -60,6 +76,9 @@ const createUser = async (req, res) => {
     });
     return res.status(201).json({ user });
   } catch (e) {
+    if (e.code === 11000) {
+      return res.status(409).json({ message: 'Пользоватиель с таким email уже существует' });
+    }
     if (e.name === 'ValidationError') {
       return res.status(400).json({ message: 'переданы некорректные данные в методы создания пользователя', error: e.message });
     }
@@ -106,5 +125,5 @@ const updateUserAvatar = async (req, res) => {
 };
 
 module.exports = {
-  getUsers, getUser, createUser, updateUser, updateUserAvatar, login,
+  getUsers, getUser, createUser, updateUser, updateUserAvatar, login, getUserMe,
 };
