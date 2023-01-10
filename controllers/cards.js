@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
+const ErrorForbidden = require('../errors/ErrorForbidden');
 
 const getCards = async (req, res, next) => {
   try {
@@ -22,7 +23,7 @@ const deleteCard = async (req, res, next) => {
       await Card.findByIdAndDelete(cardId);
       return res.status(200).json({ message: 'карточка удалена' });
     }
-    throw new BadRequest('нет прав для удаления карточки');
+    throw new ErrorForbidden('нет прав для удаления карточки');
   } catch (e) {
     if (e.name === 'CastError') {
       return next(new BadRequest('передан некорректный запрос'));
