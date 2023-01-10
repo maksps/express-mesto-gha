@@ -30,8 +30,8 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minLength: 8,
     select: false,
+    minLength: 8,
   },
 });
 const userModel = mongoose.model('user', userSchema);

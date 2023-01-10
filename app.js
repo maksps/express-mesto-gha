@@ -5,10 +5,10 @@ const { celebrate, Joi, errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
-
 const {
   createUser, login,
 } = require('./controllers/users');
+const urlRegEx = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
 const PORT = 3000;
 
@@ -34,8 +34,9 @@ app.post('/signin', celebrate({
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().regex(urlRegEx),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }).unknown(true),

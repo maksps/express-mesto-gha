@@ -77,7 +77,14 @@ const createUser = async (req, res, next) => {
       email,
       password: hash,
     });
-    return res.status(201).json({ user });
+    return res.status(201).json({
+      name,
+      about,
+      avatar,
+      email,
+      _id: user._id,
+    }
+    );
   } catch (e) {
     if (e.code === 11000) {
       return res.status(409).json({ message: 'Пользоватиель с таким email уже существует' });
