@@ -5,7 +5,6 @@ const { celebrate, Joi, errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { celebrate, Joi } = require('celebrate');
 
 const {
   createUser, login,
