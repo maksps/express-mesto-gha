@@ -8,6 +8,7 @@ const auth = require('./middlewares/auth');
 const {
   createUser, login,
 } = require('./controllers/users');
+
 const urlRegEx = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
 const PORT = 3000;
