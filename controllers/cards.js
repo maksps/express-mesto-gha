@@ -14,11 +14,15 @@ const getCards = async (req, res, next) => {
 const deleteCard = async (req, res, next) => {
   try {
     const { cardId } = req.params;
-    const card = await Card.findByIdAndDelete(cardId);
-    if (card === null) {
+    const card = await Card.findById(cardId);
+    if (card == null) {
       throw new NotFoundError('Карточка не найдена');
     }
-    return res.status(200).json({ message: 'карточка удалена' });
+    if (String(card.owner) === req.user._id) {
+      await Card.findByIdAndDelete(cardId);
+      return res.status(200).json({ message: 'карточка удалена' });
+    }
+    throw new BadRequest('нет прав для удаления карточки');
   } catch (e) {
     if (e.name === 'CastError') {
       return next(new BadRequest('передан некорректный запрос'));
@@ -66,7 +70,7 @@ const deleteLike = async (req, res, next) => {
       { $pull: { likes: req.user._id } },
       { new: true },
     );
-    if (card === null) {
+    if (card == null) {
       throw new NotFoundError('Такой карточки не существует');
     }
     return res.status(200).json({ card });
