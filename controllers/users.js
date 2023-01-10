@@ -42,7 +42,7 @@ const getUser = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (e) {
     if (e.name === 'CastError') {
-      throw new BadRequest('передан некорректный запрос');
+      return next(new BadRequest('передан некорректный запрос'));
     }
     return next(e);
   }
@@ -58,7 +58,7 @@ const getUserMe = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (e) {
     if (e.name === 'CastError') {
-      throw new BadRequest('переданы некорректный запрос');
+      return next(new BadRequest('переданы некорректный запрос'));
     }
     return next(e);
   }
@@ -83,7 +83,7 @@ const createUser = async (req, res, next) => {
       return res.status(409).json({ message: 'Пользоватиель с таким email уже существует' });
     }
     if (e.name === 'ValidationError') {
-      throw new BadRequest('переданы некорректные данные в методы создания пользователя');
+      return next(new BadRequest('переданы некорректные данные в методы создания пользователя'));
     }
     return next(e);
   }
@@ -104,7 +104,7 @@ const updateUser = async (req, res, next) => {
     return res.status(200).json({ user });
   } catch (e) {
     if (e.name === 'ValidationError') {
-      throw new BadRequest('переданы некорректные данные в методы создания пользователя');
+      return next(new BadRequest('переданы некорректные данные в методы создания пользователя'));
     }
     return next(e);
   }

@@ -21,7 +21,7 @@ const deleteCard = async (req, res, next) => {
     return res.status(200).json({ message: 'карточка удалена' });
   } catch (e) {
     if (e.name === 'CastError') {
-      throw new BadRequest('передан некорректный запрос');
+      return next(new BadRequest('передан некорректный запрос'));
     }
     return next(e);
   }
@@ -34,7 +34,7 @@ const createCard = async (req, res, next) => {
     return res.status(201).json({ card });
   } catch (e) {
     if (e.name === 'ValidationError') {
-      throw new BadRequest('переданы некорректные данные в методы создания карточки');
+      return next(new BadRequest('переданы некорректные данные в методы создания карточки'));
     }
     return next(e);
   }
@@ -53,7 +53,7 @@ const addLike = async (req, res, next) => {
     return res.status(201).json({ card });
   } catch (e) {
     if (e.name === 'CastError') {
-      throw new BadRequest('передан некорректный запрос');
+      return next(new BadRequest('передан некорректный запрос'));
     }
     return next(e);
   }
@@ -72,7 +72,7 @@ const deleteLike = async (req, res, next) => {
     return res.status(200).json({ card });
   } catch (e) {
     if (e.name === 'CastError') {
-      throw new BadRequest('передан некорректный запрос');
+      return next(new BadRequest('передан некорректный запрос'));
     }
     return next(e);
   }
