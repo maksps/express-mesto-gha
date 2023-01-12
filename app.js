@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -19,13 +19,12 @@ const app = express();
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 }, () => {
-  console.log('conected to MongoDB!');
   app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
   });
 });
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -47,17 +46,14 @@ app.use(auth);
 app.use('/', cards);
 app.use('/', users);
 
-app.use('*', (req, res ) => {
-  throw new NotFoundError('Неверный URL');
-});
+app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL')));
 
 app.use(errors());
-app.use((err, req, res, next) => {
-  if (err.statusCode) {
-    res.status(err.statusCode).send({ message: err.message });
-    return next(err);
-  }
-
+app.use((err, req, res) => {
+  // if (err.statusCode) {
+  //   res.status(err.statusCode).send({ message: err.message });
+  //   return next();
+  // }
   const { statusCode = 500, message } = err;
   return res
     .status(statusCode)
