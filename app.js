@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -50,10 +49,6 @@ app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL'))
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  // if (err.statusCode) {
-  //   res.status(err.statusCode).send({ message: err.message });
-  //   return next();
-  // }
   res.status(err.statusCode).send({ message: err.message });
   next();
   const { statusCode = 500, message } = err;
