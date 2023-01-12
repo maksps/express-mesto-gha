@@ -8,6 +8,7 @@ const auth = require('./middlewares/auth');
 const {
   createUser, login,
 } = require('./controllers/users');
+const NotFoundError = require('./errors/NotFoundError');
 
 const urlRegEx = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
@@ -46,7 +47,7 @@ app.use(auth);
 app.use('/', cards);
 app.use('/', users);
 
-app.use('*', (req, res) => res.status(404).json({ message: 'Неверный URL' }));
+app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL')));
 
 app.use(errors());
 app.use((err, req, res, next) => {
