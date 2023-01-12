@@ -49,11 +49,11 @@ app.use('/users', users);
 app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL')));
 
 app.use(errors());
-app.use((err, req, res) => {
-  // if (err.statusCode) {
-  //   res.status(err.statusCode).send({ message: err.message });
-  //   return next();
-  // }
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+    return next();
+  }
   const { statusCode = 500, message } = err;
   return res
     .status(statusCode)
