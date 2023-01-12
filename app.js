@@ -49,14 +49,15 @@ app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL'))
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-  next();
+  // res.status(err.statusCode).send({ message: err.message });
+  // next();
   const { statusCode = 500, message } = err;
-  return res
+  res
     .status(statusCode)
     .send({
       message: statusCode === 500
         ? 'На сервере произошла ошибка!'
         : message,
     });
+  next();
 });
