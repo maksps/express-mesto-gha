@@ -5,7 +5,7 @@ const ErrorForbidden = require('../errors/ErrorForbidden');
 
 const getCards = async (req, res, next) => {
   try {
-    const cards = await Card.find({}).populate('owner');
+    const cards = await Card.find({}).populate('owner').populate('likes');
     return res.status(200).json(cards);
   } catch (e) {
     return next(e);
@@ -20,7 +20,7 @@ const deleteCard = async (req, res, next) => {
       throw new NotFoundError('Карточка не найдена');
     }
     if (String(card.owner) === req.user._id) {
-      await Card.findByIdAndDelete(cardId);
+      await card.remove();
       return res.status(200).json({ message: 'карточка удалена' });
     }
     throw new ErrorForbidden('нет прав для удаления карточки');
