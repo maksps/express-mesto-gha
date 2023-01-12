@@ -48,9 +48,7 @@ app.use('/users', users);
 app.use('*', (req, res, next) => next(new NotFoundError('Неверный URL')));
 
 app.use(errors());
-app.use((err, req, res, next) => {
-  // res.status(err.statusCode).send({ message: err.message });
-  // next();
+app.use((err, req, res) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
@@ -59,5 +57,4 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка!'
         : message,
     });
-  next();
 });
