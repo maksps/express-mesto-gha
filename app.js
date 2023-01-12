@@ -5,6 +5,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/NotFoundError');
 const {
   createUser, login,
 } = require('./controllers/users');
@@ -46,7 +47,9 @@ app.use(auth);
 app.use('/', cards);
 app.use('/', users);
 
-app.use('*', (req, res) => res.status(404).json({ message: 'Неверный URL' }));
+app.use('*', (req, res ) => {
+  throw new NotFoundError('Неверный URL');
+});
 
 app.use(errors());
 app.use((err, req, res, next) => {

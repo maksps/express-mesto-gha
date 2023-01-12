@@ -4,6 +4,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const Unauthorized = require('../errors/Unauthorized');
+const ConflictError = require('../errors/ConflictError');
 
 const login = async (req, res, next) => {
   try {
@@ -57,9 +58,6 @@ const getUserMe = async (req, res, next) => {
     }
     return res.status(200).json(user);
   } catch (e) {
-    if (e.name === 'CastError') {
-      return next(new BadRequest('переданы некорректный запрос'));
-    }
     return next(e);
   }
 };
@@ -86,7 +84,7 @@ const createUser = async (req, res, next) => {
     });
   } catch (e) {
     if (e.code === 11000) {
-      return res.status(409).json({ message: 'Пользоватиель с таким email уже существует' });
+      return next(new ConflictError('Пользоватиель с таким email уже существует'));
     }
     if (e.name === 'ValidationError') {
       return next(new BadRequest('переданы некорректные данные в методы создания пользователя'));
