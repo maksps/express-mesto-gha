@@ -5,7 +5,7 @@ const ErrorForbidden = require('../errors/ErrorForbidden');
 
 const getCards = async (req, res, next) => {
   try {
-    const cards = await Card.find({}).populate('owner').populate('likes');
+    const cards = await Card.find({}).populate(['owner', 'likes']);
     return res.status(200).json(cards);
   } catch (e) {
     return next(e);
