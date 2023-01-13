@@ -28,8 +28,9 @@ const cardSchema = new Schema({
       {
         type: Schema.Types.ObjectId,
         ref: 'user',
-        default: '',
+        default: [],
       },
+
     ],
 
   createdAt: {

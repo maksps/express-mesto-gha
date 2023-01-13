@@ -127,6 +127,10 @@ const updateUserAvatar = async (req, res, next) => {
     }
     return res.status(200).json({ user });
   } catch (e) {
+    if (e.name === 'ValidationError') {
+      return next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
+    }
+
     return next(e);
   }
 };
